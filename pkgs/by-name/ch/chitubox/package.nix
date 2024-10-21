@@ -7,7 +7,7 @@
 , glib, libGLU, libGL, libpulseaudio, zlib, dbus, fontconfig, freetype
 , gtk3, pango
 , makeWrapper , python3Packages, libcap
-, lsof, curl, libuuid, cups, mesa, xz, libxkbcommon, steam-run
+, lsof, curl, libuuid, cups, mesa, xz, libxkbcommon, steam-run, zstd, fakeroot
 }:
 
 stdenv.mkDerivation (finalAttrs: {
@@ -22,7 +22,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   unpackPhase = "true";
 
-  buildInputs = [ steam-run ];
+  buildInputs = [ steam-run fakeroot ];
 
   buildPhase = ''
 
@@ -54,13 +54,14 @@ stdenv.mkDerivation (finalAttrs: {
         xcbutilrenderutil # libxcb-render-util.so.0
         xz
         libxkbcommon
+        zstd
       ])
     }:$LD_LIBRARY_PATH
 
     tar xzvf $src
     mkdir install_root
-    ls -l
-    steam-run ./CHITUBOX_Basic_Linux_Installer_V2.1.run --root install_root --accept-licenses --no-size-checking --accept-messages --confirm-command install
+    
+    fakeroot steam-run ./CHITUBOX_Basic_Linux_Installer_V2.1.run --root $(pwd)/install_root --accept-licenses --no-size-checking --accept-messages --confirm-command install
   '';
 
   installPhase = ''
